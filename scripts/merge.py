@@ -76,7 +76,7 @@ print(f"✅ 合并完成，合法节点数：{len(unique_nodes)}")
 # 输出 base64 订阅
 base64_encoded = base64.b64encode('\n'.join(unique_nodes).encode('utf-8')).decode('utf-8')
 
-with open("merged_base64.txt", "w", encoding="utf-8") as f:
+with open("merged_base64", "w", encoding="utf-8") as f:
     f.write(base64_encoded)
 
-print("✅ Base64 已写入 merged_base64.txt")
+print("✅ Base64 已写入 merged_base64")
