@@ -23,13 +23,11 @@ jobs:
         with:
           python-version: '3.x'
 
-      - name: 安装依赖（可选）
-        run: |
-          pip install -r requirements.txt || echo "无依赖"
+      - name: 安装依赖
+        run: pip install requests
 
       - name: 运行合并脚本
-        run: |
-          python scripts/merge.py
+        run: python scripts/merge.py
 
       - name: 设置 Git 用户信息
         run: |
@@ -38,7 +36,7 @@ jobs:
 
       - name: 提交并推送更新
         run: |
-          git add merged_config.yaml
+          git add merged_clash.yaml
           git commit -m "🤖 自动更新配置 $(date '+%Y-%m-%d %H:%M:%S')" || echo "无更改"
           git remote set-url origin https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }}.git
           git push origin HEAD:main
