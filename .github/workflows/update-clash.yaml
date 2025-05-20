@@ -2,11 +2,11 @@ name: 自动更新配置
 
 on:
   schedule:
-    - cron: '0 0 * * *'   # 每天 UTC 时间 00:00 触发
+    - cron: '0 0 * * *'   # 每天 UTC 0 点执行
   workflow_dispatch:      # 支持手动触发
 
 permissions:
-  contents: write        # 允许写仓库内容（push）
+  contents: write
 
 jobs:
   update-config:
@@ -16,14 +16,14 @@ jobs:
       - name: Checkout 代码
         uses: actions/checkout@v3
         with:
-          persist-credentials: false  # 关闭默认凭证，使用下面自定义token
+          persist-credentials: false
 
-      - name: 设置 Python 环境
+      - name: 设置 Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.x'
 
-      - name: 安装依赖（如果有）
+      - name: 安装依赖（可选）
         run: |
           pip install -r requirements.txt || echo "无依赖"
 
@@ -40,6 +40,7 @@ jobs:
         run: |
           git add merged_config.yaml
           git commit -m "🤖 自动更新配置 $(date '+%Y-%m-%d %H:%M:%S')" || echo "无更改"
+          git remote set-url origin https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }}.git
           git push origin HEAD:main
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
