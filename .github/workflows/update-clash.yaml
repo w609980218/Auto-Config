@@ -1,0 +1,32 @@
+name: Auto Merge Clash Config
+
+on:
+  schedule:
+    - cron: '0 2 * * *'  # 每天 UTC 时间 2 点执行
+  workflow_dispatch:      # 支持手动触发
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v3
+
+      - name: 设置 Python 环境
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: 安装依赖
+        run: pip install requests pyyaml
+
+      - name: 运行合并脚本
+        run: python scripts/merge.py
+
+      - name: 提交并推送更改
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add merged_clash.yaml
+          git commit -m "🤖 自动更新  配置 $(date '+%Y-%m-%d %H:%M:%S')" || echo "无更改"
+          git push
