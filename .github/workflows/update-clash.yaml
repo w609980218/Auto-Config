@@ -36,7 +36,7 @@ jobs:
 
       - name: 提交并推送更新
         run: |
-          git add merged.txt
+          git add merged.txt merged_base64.txt
           git commit -m "🤖 自动更新配置 $(date '+%Y-%m-%d %H:%M:%S')" || echo "无更改"
           git remote set-url origin https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }}.git
           git push origin HEAD:main
