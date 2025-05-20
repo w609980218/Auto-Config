@@ -24,7 +24,7 @@ jobs:
           python-version: '3.x'
 
       - name: 安装依赖
-        run: pip install requests
+        run: pip install requests PyYAML
 
       - name: 运行合并脚本
         run: python scripts/merge.py
