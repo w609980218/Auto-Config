@@ -15,18 +15,25 @@ all_lines = []
 
 for url in urls:
     try:
-        print(f"🔗 正在获取：{url}")
+        print(f"Fetching {url}")
         resp = requests.get(url, timeout=10)
         resp.raise_for_status()
-        decoded = base64.b64decode(resp.text.strip() + '===').decode(errors="ignore")
+        # 解码 base64 内容
+        b64 = resp.text.strip()
+        # 自动补等号对齐
+        b64 += '=' * (-len(b64) % 4)
+        decoded = base64.b64decode(b64).decode('utf-8', errors='ignore')
         lines = [line.strip() for line in decoded.splitlines() if line.strip()]
         all_lines.extend(lines)
     except Exception as e:
-        print(f"❌ 获取失败：{url} 错误：{e}")
+        print(f"⚠️ 无法处理 {url}：{e}")
 
-# 保存为 merged（原始节点列表）
-with open("merged", "w", encoding="utf-8") as f:
-    for line in all_lines:
+# 去重（可选）
+unique_lines = list(dict.fromkeys(all_lines))
+
+# 写入 merged.txt
+with open("merged.txt", "w", encoding="utf-8") as f:
+    for line in unique_lines:
         f.write(line + "\n")
 
-print("✅ 成功合并所有订阅，输出为 merged")
+print("✅ 成功合并生成 merged.txt")
