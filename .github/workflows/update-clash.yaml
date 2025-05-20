@@ -1,32 +1,45 @@
-name: Auto Merge Clash Config
+name: 自动更新配置
 
 on:
   schedule:
-    - cron: '0 2 * * *'  # 每天 UTC 时间 2 点执行
+    - cron: '0 0 * * *'   # 每天 UTC 时间 00:00 触发
   workflow_dispatch:      # 支持手动触发
 
+permissions:
+  contents: write        # 允许写仓库内容（push）
+
 jobs:
-  build:
+  update-config:
     runs-on: ubuntu-latest
+
     steps:
-      - name: 检出代码
+      - name: Checkout 代码
         uses: actions/checkout@v3
+        with:
+          persist-credentials: false  # 关闭默认凭证，使用下面自定义token
 
       - name: 设置 Python 环境
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v4
         with:
           python-version: '3.x'
 
-      - name: 安装依赖
-        run: pip install requests pyyaml
+      - name: 安装依赖（如果有）
+        run: |
+          pip install -r requirements.txt || echo "无依赖"
 
       - name: 运行合并脚本
-        run: python scripts/merge.py
+        run: |
+          python merge.py
 
-      - name: 提交并推送更改
+      - name: 设置 Git 用户信息
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git add merged_clash.yaml
-          git commit -m "🤖 自动更新  配置 $(date '+%Y-%m-%d %H:%M:%S')" || echo "无更改"
-          git push
+
+      - name: 提交并推送更新
+        run: |
+          git add merged_config.yaml
+          git commit -m "🤖 自动更新配置 $(date '+%Y-%m-%d %H:%M:%S')" || echo "无更改"
+          git push origin HEAD:main
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
