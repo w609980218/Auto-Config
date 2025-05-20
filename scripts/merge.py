@@ -24,9 +24,9 @@ for url in urls:
     except Exception as e:
         print(f"❌ 获取失败：{url} 错误：{e}")
 
-# 保存为 merged.txt（原始 vmess 节点列表）
-with open("merged.txt", "w", encoding="utf-8") as f:
+# 保存为 merged（原始节点列表）
+with open("merged", "w", encoding="utf-8") as f:
     for line in all_lines:
         f.write(line + "\n")
 
-print("✅ 成功合并所有订阅，输出为 merged.txt")
+print("✅ 成功合并所有订阅，输出为 merged")
